@@ -58,6 +58,12 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioSource _audioSource;
 
+    //Boost factor is the factor to multiply player speed by. Modified in editor.
+    [SerializeField]
+    private float _boostFactor = 1.5f;
+    //Boost multiplier holds current boost. Modified in movement function
+    private float _boostMultiplier = 1f;
+
 
     void Start()
     {
@@ -97,7 +103,6 @@ public class Player : MonoBehaviour
 
         CalculateMovement();
 
-        //spawn laser upon pressing space key
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _nextFire)
         {
             ShootLaser();
@@ -126,11 +131,16 @@ public class Player : MonoBehaviour
         _horizontalAxis = Input.GetAxis("Horizontal");
         _verticalAxis = Input.GetAxis("Vertical");
 
-        //Move left and right by reading input
-        transform.Translate(Vector3.right * _playerSpeed * _horizontalAxis * Time.deltaTime);
+        //when LShift is pressed, multiplier value becomes the boost factor. Releasing shift sets it back to 1;
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+            _boostMultiplier = _boostFactor;
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+            _boostMultiplier = 1f;
 
-        //Move up and down by reading input
-        transform.Translate(Vector3.up * _playerSpeed * _verticalAxis * Time.deltaTime);
+        //boost multiplier is added inline with movement calculation
+        transform.Translate(Vector3.right * _playerSpeed * _boostMultiplier * _horizontalAxis * Time.deltaTime);
+
+        transform.Translate(Vector3.up * _playerSpeed * _boostMultiplier * _verticalAxis * Time.deltaTime);
 
 
         if (transform.position.y >= _yUpperBound)

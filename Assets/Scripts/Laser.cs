@@ -7,7 +7,7 @@ public class Laser : MonoBehaviour
     private float _projectileSpeed = 8.0f;
     private bool _isEnemyLaser = false;
 
-    // Start is called before the first frame update
+
     void Start()
     {
         if (transform.parent == null)
@@ -16,7 +16,6 @@ public class Laser : MonoBehaviour
             Destroy(transform.parent.gameObject, 3f);
     }
 
-    // Update is called once per frame
     void Update()
     {
 

@@ -22,14 +22,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
-
     public void GameOver()
     {
         _isGameOver = true;
     }
-
-   
-
-
 }
