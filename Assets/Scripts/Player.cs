@@ -58,11 +58,14 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioSource _audioSource;
 
-    //Boost factor is the factor to multiply player speed by. Modified in editor.
+    //Boost factor is the factor to multiply player speed by. Can be modified in editor.
     [SerializeField]
     private float _boostFactor = 1.5f;
-    //Boost multiplier holds current boost. Modified in movement function
+    //Boost multiplier holds current boost. Modified and referenced in movement function
     private float _boostMultiplier = 1f;
+
+    private int _shieldStrength = 0;
+
 
 
     void Start()
@@ -96,6 +99,7 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("UI Manager is null");
         }
+
     }
 
     void Update()
@@ -166,10 +170,18 @@ public class Player : MonoBehaviour
     public void Damage()
     {
 
-        if (_isShieldEnabled)
+        if (_isShieldEnabled && _shieldStrength > 0)
         {
-            _isShieldEnabled = false;
-            _playerShield.SetActive(false);
+            _shieldStrength--;
+            if (_shieldStrength <= 0)
+            {
+                //Shield needs to be turned off after shield strength reaches 0
+                _isShieldEnabled = false;
+                _playerShield.SetActive(false);
+            }
+
+            //Call method in UImanager to update shields
+            _uiManager.UpdateShields(_shieldStrength);
             return;
         }
 
@@ -231,7 +243,9 @@ public class Player : MonoBehaviour
     public void EnableShield()
     {
         _isShieldEnabled = true;
+        _shieldStrength = 3;
         _playerShield.SetActive(true);
+        _uiManager.UpdateShields(3);
     }
 
     public void AddScore(int points)
