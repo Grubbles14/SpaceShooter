@@ -66,6 +66,9 @@ public class Player : MonoBehaviour
 
     private int _shieldStrength = 0;
 
+    private int _maxAmmo = 15;
+    private int _currentAmmo = 15;
+
 
 
     void Start()
@@ -93,13 +96,13 @@ public class Player : MonoBehaviour
             Debug.LogError("Spawn Manager is NULL");
         }
 
-
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         if (_uiManager == null)
         {
             Debug.LogError("UI Manager is null");
         }
 
+        _uiManager.UpdateAmmo(_currentAmmo);
     }
 
     void Update()
@@ -107,7 +110,7 @@ public class Player : MonoBehaviour
 
         CalculateMovement();
 
-        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _nextFire)
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _nextFire && _currentAmmo > 0)
         {
             ShootLaser();
         }
@@ -127,6 +130,18 @@ public class Player : MonoBehaviour
             Instantiate(laserPrefab, new Vector3(transform.position.x, transform.position.y + _laserOffset, transform.position.z), Quaternion.identity);
         }
         _audioSource.PlayOneShot(_laserSound);
+
+        //Only reduce ammo count if spawning has started
+        if(_spawnObject.GetSpawnStatus())
+            _currentAmmo--;
+
+        _uiManager.UpdateAmmo(_currentAmmo);
+    }
+
+    public void RefillAmmo()
+    {
+        _currentAmmo = _maxAmmo;
+        _uiManager.UpdateAmmo(_currentAmmo);
     }
 
 

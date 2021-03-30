@@ -12,6 +12,7 @@ public class SpawnManager : MonoBehaviour
     private GameObject _tripleShotPrefab;
     private float _ySpawn = 7.0f;
     private bool _stopSpawning = false;
+    private bool _spawning = false;
 
     [SerializeField]
     private GameObject[] _powerupList;
@@ -26,6 +27,7 @@ public class SpawnManager : MonoBehaviour
     {
         StartCoroutine(SpawnEnemyRoutine());
         StartCoroutine(SpawnPowerupRoutine());
+        _spawning = true;
     }
 
     //spawn game objects every 3.5 seconds
@@ -54,5 +56,10 @@ public class SpawnManager : MonoBehaviour
     public void StopSpawn()
     {
         _stopSpawning = true;
+    }
+
+    public bool GetSpawnStatus()
+    {
+        return _spawning;
     }
 }

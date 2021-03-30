@@ -19,6 +19,8 @@ public class UIManager : MonoBehaviour
     private GameObject _gameManager;
     [SerializeField]
     private Image[] _shieldCounters;
+    [SerializeField]
+    private Text _ammoText;
 
     void Start()
     {
@@ -69,6 +71,11 @@ public class UIManager : MonoBehaviour
                     i.enabled = false;
                 break;
         }
+    }
+
+    public void UpdateAmmo(int ammo)
+    {
+        _ammoText.text = "Ammo: " + ammo;
     }
 
     void GameOverSequence()
