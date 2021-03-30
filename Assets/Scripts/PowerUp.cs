@@ -35,17 +35,12 @@ public class PowerUp : MonoBehaviour
         }
     }
 
-    //ontriggercollision
-    //only be collectible by player if other.tag == player
-    //on collected, destroy
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         
         if (other.tag == "Player")
         {
             _playerObject = other.transform.GetComponent<Player>();
-            //_audioSource.Play();
             _playerObject.PlaySound(_audioSource.clip);
             switch (_powerupID)
             {
@@ -57,6 +52,9 @@ public class PowerUp : MonoBehaviour
                     break;
                 case 2:
                     _playerObject.EnableShield();
+                    break;
+                case 3:
+                    _playerObject.RefillAmmo();
                     break;
             }
             
