@@ -280,4 +280,13 @@ public class Player : MonoBehaviour
     public void PlaySound(AudioClip sound){
         _audioSource.PlayOneShot(sound);
         }
+
+    public void AddHealth()
+    {
+        if (_lives < 3)
+        {
+            _lives++;
+            _uiManager.UpdateLives(_lives);
+        }
+    }
 }
