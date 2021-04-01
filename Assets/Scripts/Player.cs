@@ -56,6 +56,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioClip _laserSound;
     [SerializeField]
+    private AudioClip _fireErrorSound;
+    [SerializeField]
     private AudioSource _audioSource;
 
     //Boost factor is the factor to multiply player speed by. Can be modified in editor.
@@ -66,6 +68,8 @@ public class Player : MonoBehaviour
 
     private int _shieldStrength = 0;
 
+    //MaxAmmo is a reference to the max allowable ammo count. Only used to refill ammo.
+    [SerializeField]
     private int _maxAmmo = 15;
     private int _currentAmmo = 15;
 
@@ -113,6 +117,10 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _nextFire && _currentAmmo > 0)
         {
             ShootLaser();
+        }
+        else if (Input.GetKeyDown(KeyCode.Space) && Time.time > _nextFire && _currentAmmo <= 0)
+        {
+            _audioSource.PlayOneShot(_fireErrorSound);
         }
 
     }
