@@ -56,13 +56,23 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioClip _laserSound;
     [SerializeField]
+    private AudioClip _fireErrorSound;
+    [SerializeField]
     private AudioSource _audioSource;
 
-    //Boost factor is the factor to multiply player speed by. Modified in editor.
+    //Boost factor is the factor to multiply player speed by. Can be modified in editor.
     [SerializeField]
     private float _boostFactor = 1.5f;
-    //Boost multiplier holds current boost. Modified in movement function
+    //Boost multiplier holds current boost. Modified and referenced in movement function
     private float _boostMultiplier = 1f;
+
+    private int _shieldStrength = 0;
+
+    //MaxAmmo is a reference to the max allowable ammo count. Only used to refill ammo.
+    [SerializeField]
+    private int _maxAmmo = 15;
+    private int _currentAmmo = 15;
+
 
 
     void Start()
@@ -90,12 +100,13 @@ public class Player : MonoBehaviour
             Debug.LogError("Spawn Manager is NULL");
         }
 
-
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         if (_uiManager == null)
         {
             Debug.LogError("UI Manager is null");
         }
+
+        _uiManager.UpdateAmmo(_currentAmmo);
     }
 
     void Update()
@@ -103,9 +114,13 @@ public class Player : MonoBehaviour
 
         CalculateMovement();
 
-        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _nextFire)
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _nextFire && _currentAmmo > 0)
         {
             ShootLaser();
+        }
+        else if (Input.GetKeyDown(KeyCode.Space) && Time.time > _nextFire && _currentAmmo <= 0)
+        {
+            _audioSource.PlayOneShot(_fireErrorSound);
         }
 
     }
@@ -123,6 +138,18 @@ public class Player : MonoBehaviour
             Instantiate(laserPrefab, new Vector3(transform.position.x, transform.position.y + _laserOffset, transform.position.z), Quaternion.identity);
         }
         _audioSource.PlayOneShot(_laserSound);
+
+        //Only reduce ammo count if spawning has started
+        if(_spawnObject.GetSpawnStatus())
+            _currentAmmo--;
+
+        _uiManager.UpdateAmmo(_currentAmmo);
+    }
+
+    public void RefillAmmo()
+    {
+        _currentAmmo = _maxAmmo;
+        _uiManager.UpdateAmmo(_currentAmmo);
     }
 
 
@@ -166,10 +193,18 @@ public class Player : MonoBehaviour
     public void Damage()
     {
 
-        if (_isShieldEnabled)
+        if (_isShieldEnabled && _shieldStrength > 0)
         {
-            _isShieldEnabled = false;
-            _playerShield.SetActive(false);
+            _shieldStrength--;
+            if (_shieldStrength <= 0)
+            {
+                //Shield needs to be turned off after shield strength reaches 0
+                _isShieldEnabled = false;
+                _playerShield.SetActive(false);
+            }
+
+            //Call method in UImanager to update shields
+            _uiManager.UpdateShields(_shieldStrength);
             return;
         }
 
@@ -231,7 +266,9 @@ public class Player : MonoBehaviour
     public void EnableShield()
     {
         _isShieldEnabled = true;
+        _shieldStrength = 3;
         _playerShield.SetActive(true);
+        _uiManager.UpdateShields(3);
     }
 
     public void AddScore(int points)
@@ -243,4 +280,13 @@ public class Player : MonoBehaviour
     public void PlaySound(AudioClip sound){
         _audioSource.PlayOneShot(sound);
         }
+
+    public void AddHealth()
+    {
+        if (_lives < 3)
+        {
+            _lives++;
+            _uiManager.UpdateLives(_lives);
+        }
+    }
 }

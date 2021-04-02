@@ -17,11 +17,18 @@ public class UIManager : MonoBehaviour
     private Text _restartText;
     [SerializeField]
     private GameObject _gameManager;
+    [SerializeField]
+    private Image[] _shieldCounters;
+    [SerializeField]
+    private Text _ammoText;
 
     void Start()
     {
         _scoreText.text = "Score: " + 0;
         _gameOverText.gameObject.SetActive(false);
+
+        foreach (Image i in _shieldCounters)
+            i.enabled = false;
     }
 
 
@@ -38,6 +45,37 @@ public class UIManager : MonoBehaviour
         {
             GameOverSequence();
         }
+    }
+
+    public void UpdateShields(int shields)
+    {
+        switch (shields)
+        {
+            case 1:
+                _shieldCounters[0].enabled = true;
+                _shieldCounters[1].enabled = false;
+                _shieldCounters[2].enabled = false;
+                break;
+            case 2:
+                _shieldCounters[0].enabled = true;
+                _shieldCounters[1].enabled = true;
+                _shieldCounters[2].enabled = false;
+                break;
+            case 3:
+                _shieldCounters[0].enabled = true;
+                _shieldCounters[1].enabled = true;
+                _shieldCounters[2].enabled = true;
+                break;
+            default:
+                foreach (Image i in _shieldCounters)
+                    i.enabled = false;
+                break;
+        }
+    }
+
+    public void UpdateAmmo(int ammo)
+    {
+        _ammoText.text = "Ammo: " + ammo;
     }
 
     void GameOverSequence()
