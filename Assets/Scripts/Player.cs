@@ -73,6 +73,9 @@ public class Player : MonoBehaviour
     private int _maxAmmo = 15;
     private int _currentAmmo = 15;
 
+    [SerializeField]
+    private GameObject _cameraObject;
+
 
 
     void Start()
@@ -105,6 +108,14 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("UI Manager is null");
         }
+
+        _cameraObject = GameObject.Find("Main Camera");
+
+        if (_cameraObject == null)
+        {
+            Debug.LogError("Camera is NULL");
+        }
+
 
         _uiManager.UpdateAmmo(_currentAmmo);
     }
@@ -212,7 +223,7 @@ public class Player : MonoBehaviour
         {
             _lives--;
             _uiManager.UpdateLives(_lives);
-
+            _cameraObject.GetComponent<CameraController>().CameraShake();
             switch (_lives)
             {
                 case 2:
