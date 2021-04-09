@@ -21,6 +21,8 @@ public class UIManager : MonoBehaviour
     private Image[] _shieldCounters;
     [SerializeField]
     private Text _ammoText;
+    [SerializeField]
+    private Image _healthBar;
 
     void Start()
     {
@@ -30,6 +32,7 @@ public class UIManager : MonoBehaviour
         foreach (Image i in _shieldCounters)
             i.enabled = false;
     }
+
 
 
     public void UpdateScore(int playerScore)
@@ -76,6 +79,11 @@ public class UIManager : MonoBehaviour
     public void UpdateAmmo(int ammo)
     {
         _ammoText.text = "Ammo: " + ammo;
+    }
+
+    public void UpdateBoosterBar(float b)
+    {
+        _healthBar.fillAmount = b / 100;
     }
 
     void GameOverSequence()
