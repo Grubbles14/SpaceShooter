@@ -65,6 +65,13 @@ public class Player : MonoBehaviour
     private float _boostFactor = 1.5f;
     //Boost multiplier holds current boost. Modified and referenced in movement function
     private float _boostMultiplier = 1f;
+    [SerializeField]
+    private float _boostRemaining = 100;
+    [SerializeField]
+    private float _boostDrain = 15f;
+    [SerializeField]
+    private bool _canBoost = true;
+    private bool _boosting = false;
 
     private int _shieldStrength = 0;
 
@@ -75,6 +82,8 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private GameObject _cameraObject;
+
+    
 
 
 
@@ -169,11 +178,22 @@ public class Player : MonoBehaviour
         _horizontalAxis = Input.GetAxis("Horizontal");
         _verticalAxis = Input.GetAxis("Vertical");
 
-        //when LShift is pressed, multiplier value becomes the boost factor. Releasing shift sets it back to 1;
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift) && _canBoost)
+        {
+            _boosting = true;
+            StopCoroutine("BoostCooldownRoutine");
             _boostMultiplier = _boostFactor;
+            _boostRemaining -= (_boostDrain * Time.deltaTime);
+        }
         if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            _boosting = false;
             _boostMultiplier = 1f;
+            StopCoroutine("BoostCooldownRoutine");
+            StartCoroutine(BoostCooldownRoutine());
+        }
+
+        _uiManager.UpdateBoosterBar(_boostRemaining);
 
         //boost multiplier is added inline with movement calculation
         transform.Translate(Vector3.right * _playerSpeed * _boostMultiplier * _horizontalAxis * Time.deltaTime);
@@ -199,6 +219,24 @@ public class Player : MonoBehaviour
         {
             transform.position = new Vector3(_xUpperBound, transform.position.y, transform.position.z);
         }
+
+    }
+
+    private IEnumerator BoostCooldownRoutine()
+    {
+        _canBoost = false;
+        yield return new WaitForSeconds(1.5f);
+        _canBoost = true;
+        while (_boostRemaining < 100 && !_boosting)
+        {
+            _boostRemaining += (_boostDrain * 2f * Time.deltaTime);
+            yield return new WaitForFixedUpdate();
+        }
+    }
+
+    public float GetBoostLevel()
+    {
+        return Mathf.Clamp(_boostRemaining, 0, 100);
     }
 
     public void Damage()
