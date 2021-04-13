@@ -28,6 +28,7 @@ public class Player : MonoBehaviour
 
     //Space offset for laser position
     private float _laserOffset = 1.05f;
+    private float _railgunOffset = 6f;
 
     //Firerate variables
     [SerializeField]
@@ -58,6 +59,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioClip _fireErrorSound;
     [SerializeField]
+    private AudioClip _railgunSound;
+    [SerializeField]
     private AudioSource _audioSource;
 
     //Boost factor is the factor to multiply player speed by. Can be modified in editor.
@@ -65,6 +68,13 @@ public class Player : MonoBehaviour
     private float _boostFactor = 1.5f;
     //Boost multiplier holds current boost. Modified and referenced in movement function
     private float _boostMultiplier = 1f;
+    [SerializeField]
+    private float _boostRemaining = 100;
+    [SerializeField]
+    private float _boostDrain = 15f;
+    [SerializeField]
+    private bool _canBoost = true;
+    private bool _boosting = false;
 
     private int _shieldStrength = 0;
 
@@ -72,6 +82,16 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int _maxAmmo = 15;
     private int _currentAmmo = 15;
+
+    [SerializeField]
+    private GameObject _cameraObject;
+
+    [SerializeField]
+    private GameObject _railgunPrefab;
+    [SerializeField]
+    private bool _isRailgunActive = false;
+
+    
 
 
 
@@ -106,6 +126,14 @@ public class Player : MonoBehaviour
             Debug.LogError("UI Manager is null");
         }
 
+        _cameraObject = GameObject.Find("Main Camera");
+
+        if (_cameraObject == null)
+        {
+            Debug.LogError("Camera is NULL");
+        }
+
+
         _uiManager.UpdateAmmo(_currentAmmo);
     }
 
@@ -129,15 +157,23 @@ public class Player : MonoBehaviour
     {
         _nextFire = Time.time + _fireRate;
 
-        if (_isTripleShotActive)
+
+        if (_isRailgunActive)
+        {
+            Instantiate(_railgunPrefab, new Vector3(transform.position.x, transform.position.y + _railgunOffset, transform.position.z), Quaternion.identity);
+            _audioSource.PlayOneShot(_railgunSound);
+        }
+        else if (_isTripleShotActive)
         {
             Instantiate(tripleShotPrefab, new Vector3(transform.position.x, transform.position.y + _laserOffset, transform.position.z), Quaternion.identity);
+            _audioSource.PlayOneShot(_laserSound);
         }
         else
         {
             Instantiate(laserPrefab, new Vector3(transform.position.x, transform.position.y + _laserOffset, transform.position.z), Quaternion.identity);
+            _audioSource.PlayOneShot(_laserSound);
         }
-        _audioSource.PlayOneShot(_laserSound);
+        
 
         //Only reduce ammo count if spawning has started
         if(_spawnObject.GetSpawnStatus())
@@ -158,11 +194,22 @@ public class Player : MonoBehaviour
         _horizontalAxis = Input.GetAxis("Horizontal");
         _verticalAxis = Input.GetAxis("Vertical");
 
-        //when LShift is pressed, multiplier value becomes the boost factor. Releasing shift sets it back to 1;
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift) && _canBoost)
+        {
+            _boosting = true;
+            StopCoroutine("BoostCooldownRoutine");
             _boostMultiplier = _boostFactor;
+            _boostRemaining -= (_boostDrain * Time.deltaTime);
+        }
         if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            _boosting = false;
             _boostMultiplier = 1f;
+            StopCoroutine("BoostCooldownRoutine");
+            StartCoroutine(BoostCooldownRoutine());
+        }
+
+        _uiManager.UpdateBoosterBar(_boostRemaining);
 
         //boost multiplier is added inline with movement calculation
         transform.Translate(Vector3.right * _playerSpeed * _boostMultiplier * _horizontalAxis * Time.deltaTime);
@@ -188,6 +235,24 @@ public class Player : MonoBehaviour
         {
             transform.position = new Vector3(_xUpperBound, transform.position.y, transform.position.z);
         }
+
+    }
+
+    private IEnumerator BoostCooldownRoutine()
+    {
+        _canBoost = false;
+        yield return new WaitForSeconds(1.5f);
+        _canBoost = true;
+        while (_boostRemaining < 100 && !_boosting)
+        {
+            _boostRemaining += (_boostDrain * 2f * Time.deltaTime);
+            yield return new WaitForFixedUpdate();
+        }
+    }
+
+    public float GetBoostLevel()
+    {
+        return Mathf.Clamp(_boostRemaining, 0, 100);
     }
 
     public void Damage()
@@ -212,7 +277,7 @@ public class Player : MonoBehaviour
         {
             _lives--;
             _uiManager.UpdateLives(_lives);
-
+            _cameraObject.GetComponent<CameraController>().CameraShake();
             switch (_lives)
             {
                 case 2:
@@ -241,6 +306,7 @@ public class Player : MonoBehaviour
 
     public void EnableTripleShot()
     {
+        //Make change to disable any current coroutines
         _isTripleShotActive = true;
         StartCoroutine(TripleShotPowerDownRoutine());
     }
@@ -288,5 +354,18 @@ public class Player : MonoBehaviour
             _lives++;
             _uiManager.UpdateLives(_lives);
         }
+    }
+
+    public void EnableRailgun()
+    {
+        _isRailgunActive = true;
+        RefillAmmo();
+        StartCoroutine(RailgunPowerDownRoutine());
+    }
+
+    IEnumerator RailgunPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(5.0f);
+        _isRailgunActive = false;
     }
 }

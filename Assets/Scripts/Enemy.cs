@@ -21,6 +21,8 @@ public class Enemy : MonoBehaviour
     private float _fireRate = 3.0f;
     private float _canFire = -1f;
 
+    //Create a bool isFireEnabled so I can stop firing after enemy is destroyed
+
     // Start is called before the first frame update
     void Start()
     {
@@ -82,7 +84,19 @@ public class Enemy : MonoBehaviour
 
         if (other.tag == "Laser")
         {
+            //Need to put a check here to ignore laser if it's from an enemy
             Destroy(other.gameObject);
+            _anim.SetTrigger("OnEnemyDeath");
+            _enemySpeed = 0;
+            this.GetComponent<BoxCollider2D>().enabled = false;
+            _audioSource.Play();
+            if (playerObj != null)
+                playerObj.AddScore(10);
+            Destroy(gameObject, 2.8f);
+        }
+
+        if (other.tag == "Railgun")
+        {
             _anim.SetTrigger("OnEnemyDeath");
             _enemySpeed = 0;
             this.GetComponent<BoxCollider2D>().enabled = false;
