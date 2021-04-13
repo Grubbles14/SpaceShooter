@@ -21,6 +21,7 @@ public class PowerUp : MonoBehaviour
     void Start()
     {
         _audioSource = GetComponent<AudioSource>();
+
     }
 
     void Update()
@@ -58,6 +59,9 @@ public class PowerUp : MonoBehaviour
                     break;
                 case 4:
                     _playerObject.AddHealth();
+                    break;
+                case 5:
+                    _playerObject.EnableRailgun();
                     break;
             }
             

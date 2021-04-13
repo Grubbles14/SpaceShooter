@@ -16,8 +16,10 @@ public class SpawnManager : MonoBehaviour
 
     [SerializeField]
     private GameObject[] _powerupList;
+    [SerializeField]
+    private GameObject[] _specialPowerupList;
 
-    
+
     void Start()
     {
         
@@ -30,7 +32,6 @@ public class SpawnManager : MonoBehaviour
         _spawning = true;
     }
 
-    //spawn game objects every 3.5 seconds
     IEnumerator SpawnEnemyRoutine()
     {
         yield return new WaitForSeconds(2);
@@ -47,8 +48,19 @@ public class SpawnManager : MonoBehaviour
         yield return new WaitForSeconds(4);
         while (!_stopSpawning)
         {
-            int randomPowerup = Random.Range(0, _powerupList.Length);
-            Instantiate(_powerupList[randomPowerup], new Vector3(Random.Range(-9, 10), _ySpawn, 0), Quaternion.identity);
+            int d = Random.Range(1, 11);
+            Debug.Log(d.ToString());
+            if (d == 3)
+            {
+                //spawn random special powerup. 1 in 10 chance of spawning special.
+                int randomPowerup = Random.Range(0, _specialPowerupList.Length);
+                Instantiate(_specialPowerupList[randomPowerup], new Vector3(Random.Range(-9, 10), _ySpawn, 0), Quaternion.identity);
+            }
+            else
+            {
+                int randomPowerup = Random.Range(0, _powerupList.Length);
+                Instantiate(_powerupList[randomPowerup], new Vector3(Random.Range(-9, 10), _ySpawn, 0), Quaternion.identity);
+            }
             yield return new WaitForSeconds(Random.Range(6, 10));
         }
     }

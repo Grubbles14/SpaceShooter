@@ -28,6 +28,7 @@ public class Player : MonoBehaviour
 
     //Space offset for laser position
     private float _laserOffset = 1.05f;
+    private float _railgunOffset = 6f;
 
     //Firerate variables
     [SerializeField]
@@ -58,6 +59,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioClip _fireErrorSound;
     [SerializeField]
+    private AudioClip _railgunSound;
+    [SerializeField]
     private AudioSource _audioSource;
 
     //Boost factor is the factor to multiply player speed by. Can be modified in editor.
@@ -82,6 +85,11 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private GameObject _cameraObject;
+
+    [SerializeField]
+    private GameObject _railgunPrefab;
+    [SerializeField]
+    private bool _isRailgunActive = false;
 
     
 
@@ -149,15 +157,23 @@ public class Player : MonoBehaviour
     {
         _nextFire = Time.time + _fireRate;
 
-        if (_isTripleShotActive)
+
+        if (_isRailgunActive)
+        {
+            Instantiate(_railgunPrefab, new Vector3(transform.position.x, transform.position.y + _railgunOffset, transform.position.z), Quaternion.identity);
+            _audioSource.PlayOneShot(_railgunSound);
+        }
+        else if (_isTripleShotActive)
         {
             Instantiate(tripleShotPrefab, new Vector3(transform.position.x, transform.position.y + _laserOffset, transform.position.z), Quaternion.identity);
+            _audioSource.PlayOneShot(_laserSound);
         }
         else
         {
             Instantiate(laserPrefab, new Vector3(transform.position.x, transform.position.y + _laserOffset, transform.position.z), Quaternion.identity);
+            _audioSource.PlayOneShot(_laserSound);
         }
-        _audioSource.PlayOneShot(_laserSound);
+        
 
         //Only reduce ammo count if spawning has started
         if(_spawnObject.GetSpawnStatus())
@@ -290,6 +306,7 @@ public class Player : MonoBehaviour
 
     public void EnableTripleShot()
     {
+        //Make change to disable any current coroutines
         _isTripleShotActive = true;
         StartCoroutine(TripleShotPowerDownRoutine());
     }
@@ -337,5 +354,18 @@ public class Player : MonoBehaviour
             _lives++;
             _uiManager.UpdateLives(_lives);
         }
+    }
+
+    public void EnableRailgun()
+    {
+        _isRailgunActive = true;
+        RefillAmmo();
+        StartCoroutine(RailgunPowerDownRoutine());
+    }
+
+    IEnumerator RailgunPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(5.0f);
+        _isRailgunActive = false;
     }
 }

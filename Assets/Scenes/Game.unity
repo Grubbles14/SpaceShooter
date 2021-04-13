@@ -176,7 +176,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &106573563
 GameObject:
@@ -218,6 +218,8 @@ MonoBehaviour:
   - {fileID: 6909066130861527419, guid: 2f20d6667d9cd604e82e2dd92f0ab806, type: 3}
   - {fileID: 8653368840703046733, guid: 1db995d3020e70c469f9d35cab1c3a91, type: 3}
   - {fileID: 9113204359332053904, guid: aa19761f180c502458b81180d0b2ab83, type: 3}
+  _specialPowerupList:
+  - {fileID: 1502837899055320565, guid: 7d5844c7bc4ed7043bc65ce25dcd46a0, type: 3}
 --- !u!4 &106573565
 Transform:
   m_ObjectHideFlags: 0
@@ -883,7 +885,7 @@ PrefabInstance:
     - target: {fileID: 2269562091435119733, guid: 935419f356888ec41931109fd0090404,
         type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2269562091435119733, guid: 935419f356888ec41931109fd0090404,
         type: 3}
@@ -951,6 +953,7 @@ MonoBehaviour:
   _leftEngine: {fileID: 2136014787}
   _laserSound: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
   _fireErrorSound: {fileID: 8300000, guid: 707adcc919ae59f45ad97673a6322a14, type: 3}
+  _railgunSound: {fileID: 8300000, guid: e3972fe3d382b5e408bb72746a2168d9, type: 3}
   _audioSource: {fileID: 0}
   _boostFactor: 1.5
   _boostRemaining: 100
@@ -958,6 +961,9 @@ MonoBehaviour:
   _canBoost: 1
   _maxAmmo: 15
   _cameraObject: {fileID: 0}
+  _railgunPrefab: {fileID: 3272517380643569900, guid: c0d779aa9683f704db84ed5743614bcd,
+    type: 3}
+  _isRailgunActive: 0
 --- !u!212 &823526276
 SpriteRenderer:
   m_ObjectHideFlags: 0
