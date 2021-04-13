@@ -275,23 +275,7 @@ public class Player : MonoBehaviour
 
         else
         {
-            _lives--;
-            _uiManager.UpdateLives(_lives);
-            _cameraObject.GetComponent<CameraController>().CameraShake();
-            switch (_lives)
-            {
-                case 2:
-                    _rightEngine.SetActive(true);
-                    break;
-                case 1:
-                    _leftEngine.SetActive(true);
-                    break;
-                case 0:
-                    Destroy(gameObject);
-                    if (_spawnObject != null)
-                        _spawnObject.StopSpawn();
-                    break;
-            }
+            TakeDamage();
         }
     }
 
@@ -367,5 +351,31 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(5.0f);
         _isRailgunActive = false;
+    }
+
+    private void TakeDamage()
+    {
+        _lives--;
+        _uiManager.UpdateLives(_lives);
+        _cameraObject.GetComponent<CameraController>().CameraShake();
+        switch (_lives)
+        {
+            case 2:
+                _rightEngine.SetActive(true);
+                break;
+            case 1:
+                _leftEngine.SetActive(true);
+                break;
+            case 0:
+                Destroy(gameObject);
+                if (_spawnObject != null)
+                    _spawnObject.StopSpawn();
+                break;
+        }
+    }
+
+    public void RemoveHealth()
+    {
+        TakeDamage();
     }
 }
