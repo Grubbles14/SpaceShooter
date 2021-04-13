@@ -134,7 +134,7 @@ public class Player : MonoBehaviour
         }
 
 
-        _uiManager.UpdateAmmo(_currentAmmo);
+        _uiManager.UpdateAmmo(_currentAmmo, _maxAmmo);
     }
 
     void Update()
@@ -179,13 +179,13 @@ public class Player : MonoBehaviour
         if(_spawnObject.GetSpawnStatus())
             _currentAmmo--;
 
-        _uiManager.UpdateAmmo(_currentAmmo);
+        _uiManager.UpdateAmmo(_currentAmmo, _maxAmmo);
     }
 
     public void RefillAmmo()
     {
         _currentAmmo = _maxAmmo;
-        _uiManager.UpdateAmmo(_currentAmmo);
+        _uiManager.UpdateAmmo(_currentAmmo, _maxAmmo);
     }
 
 

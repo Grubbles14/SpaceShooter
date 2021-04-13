@@ -76,9 +76,9 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void UpdateAmmo(int ammo)
+    public void UpdateAmmo(int ammo, int max)
     {
-        _ammoText.text = "Ammo: " + ammo;
+        _ammoText.text = "Ammo: " + ammo + "/" + max;
     }
 
     public void UpdateBoosterBar(float b)
