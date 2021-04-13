@@ -17,6 +17,8 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject[] _powerupList;
     [SerializeField]
+    private GameObject[] _negPickupList;
+    [SerializeField]
     private GameObject[] _specialPowerupList;
 
 
@@ -29,6 +31,7 @@ public class SpawnManager : MonoBehaviour
     {
         StartCoroutine(SpawnEnemyRoutine());
         StartCoroutine(SpawnPowerupRoutine());
+        StartCoroutine(SpawnNegativePickupRoutine());
         _spawning = true;
     }
 
@@ -45,7 +48,8 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator SpawnPowerupRoutine()
     {
-        yield return new WaitForSeconds(4);
+        int t = Random.Range(2, 6);
+        yield return new WaitForSeconds(t);
         while (!_stopSpawning)
         {
             int d = Random.Range(1, 11);
@@ -62,6 +66,18 @@ public class SpawnManager : MonoBehaviour
                 Instantiate(_powerupList[randomPowerup], new Vector3(Random.Range(-9, 10), _ySpawn, 0), Quaternion.identity);
             }
             yield return new WaitForSeconds(Random.Range(6, 10));
+        }
+    }
+
+        IEnumerator SpawnNegativePickupRoutine()
+    {
+        int t = Random.Range(2, 6);
+        yield return new WaitForSeconds(t);
+        while (!_stopSpawning)
+        {
+            int randomPowerup = Random.Range(0, _negPickupList.Length);
+            Instantiate(_negPickupList[randomPowerup], new Vector3(Random.Range(-9, 10), _ySpawn, 0), Quaternion.identity);
+            yield return new WaitForSeconds(Random.Range(9, 13));
         }
     }
 
