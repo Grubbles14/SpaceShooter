@@ -353,6 +353,11 @@ public class Player : MonoBehaviour
         _isRailgunActive = false;
     }
 
+    public void RemoveHealth()
+    {
+        TakeDamage();
+    }
+
     private void TakeDamage()
     {
         _lives--;
@@ -374,8 +379,5 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void RemoveHealth()
-    {
-        TakeDamage();
-    }
+    
 }

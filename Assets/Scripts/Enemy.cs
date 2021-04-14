@@ -20,13 +20,35 @@ public class Enemy : MonoBehaviour
     private GameObject _laserPrefab;
     private float _fireRate = 3.0f;
     private float _canFire = -1f;
+    private bool _isDead = false;
 
-    //Create a bool isFireEnabled so I can stop firing after enemy is destroyed
+    private bool _isShieldedEnemy = false;
+    private bool _shieldUp = false;
+    [SerializeField]
+    private GameObject _enemyShield;
 
-    // Start is called before the first frame update
+    void Awake()
+    {
+        int d = Random.Range(1, 11);
+        switch (d)
+        {
+            case 1:
+                _isShieldedEnemy = true;
+                break;
+            default:
+                break;
+        }
+    }
+
     void Start()
     {
-        //assign animator component
+
+        if (_isShieldedEnemy)
+        {
+            _shieldUp = true;
+            _enemyShield.SetActive(true);
+        }
+
         _anim = this.GetComponent<Animator>();
         if (_anim == null)
         {
@@ -39,13 +61,12 @@ public class Enemy : MonoBehaviour
 
     }
 
-    // Update is called once per frame
     void Update()
     {
 
         CalculateMovement();
 
-        if(Time.time > _canFire)
+        if(Time.time > _canFire && !_isDead)
         {
             _fireRate = Random.Range(3f, 7f);
             _canFire = Time.time + _fireRate;
@@ -75,35 +96,42 @@ public class Enemy : MonoBehaviour
         {
             if(playerObj != null)
                 playerObj.Damage();
-            _anim.SetTrigger("OnEnemyDeath");
-            _enemySpeed = 0;
-            this.GetComponent<BoxCollider2D>().enabled = false;
-            _audioSource.Play();
-            Destroy(gameObject, 2.8f);
+            EnemyDestroy();
         }
 
-        if (other.tag == "Laser")
+        if (other.tag == "Laser" && !other.GetComponent<Laser>().IsEnemy())
         {
-            //Need to put a check here to ignore laser if it's from an enemy
-            Destroy(other.gameObject);
-            _anim.SetTrigger("OnEnemyDeath");
-            _enemySpeed = 0;
-            this.GetComponent<BoxCollider2D>().enabled = false;
-            _audioSource.Play();
-            if (playerObj != null)
-                playerObj.AddScore(10);
-            Destroy(gameObject, 2.8f);
+            //I'm only checking for shields active when hit with laser. Colliding with player should destroy enemy completely. Railgun goes through shields.
+            if (_shieldUp)
+            {
+                _shieldUp = false;
+                _enemyShield.SetActive(false);
+            }
+            else
+            {
+                Destroy(other.gameObject);
+                EnemyDestroy();
+                if (playerObj != null)
+                    playerObj.AddScore(10);
+            }
         }
 
         if (other.tag == "Railgun")
         {
-            _anim.SetTrigger("OnEnemyDeath");
-            _enemySpeed = 0;
-            this.GetComponent<BoxCollider2D>().enabled = false;
-            _audioSource.Play();
+            EnemyDestroy();
             if (playerObj != null)
                 playerObj.AddScore(10);
-            Destroy(gameObject, 2.8f);
         }
+    }
+
+    private void EnemyDestroy()
+    {
+        _anim.SetTrigger("OnEnemyDeath");
+        _enemySpeed = 0;
+        this.GetComponent<BoxCollider2D>().enabled = false;
+        _isDead = true;
+        _enemyShield.SetActive(false);
+        _audioSource.Play();
+        Destroy(gameObject, 2.8f);
     }
 }
