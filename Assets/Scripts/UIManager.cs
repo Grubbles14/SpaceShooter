@@ -23,6 +23,10 @@ public class UIManager : MonoBehaviour
     private Text _ammoText;
     [SerializeField]
     private Image _healthBar;
+    [SerializeField]
+    private Text _waveCountText;
+    [SerializeField]
+    private Text _waveCountdownTimer;
 
     void Start()
     {
@@ -86,6 +90,11 @@ public class UIManager : MonoBehaviour
         _healthBar.fillAmount = b / 100;
     }
 
+    public void UpdateWaveCount(int w)
+    {
+        _waveCountText.text = "Wave: " + w;
+    }
+
     void GameOverSequence()
     {
         _gameOverText.gameObject.SetActive(true);
@@ -103,5 +112,25 @@ public class UIManager : MonoBehaviour
             _gameOverText.text = "";
             yield return new WaitForSeconds(.5f);
         }
+    }
+
+    IEnumerator WaveCountdownTimer(float t)
+    {
+        _waveCountdownTimer.enabled = true;
+        float secondsLeft = t;
+        while (secondsLeft > 0)
+        {
+            Debug.Log("Wave countdown: " + secondsLeft);
+            _waveCountdownTimer.text = "New wave starting in: " + secondsLeft;
+            yield return new WaitForSeconds(1.0f);
+            secondsLeft--;
+        }
+        _waveCountdownTimer.enabled = false;
+    }
+
+    public void StartWaveTimer(float time)
+    {
+        StopCoroutine("WaveCountdownTimer");
+        StartCoroutine(WaveCountdownTimer(time));
     }
 }
