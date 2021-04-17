@@ -21,29 +21,53 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject[] _specialPowerupList;
 
+    private int _currWave = 0;
+    [SerializeField]
+    private int[] _waveEnemyCounters = { 10, 15, 25 };
+    private UIManager _uiManager;
+
 
     void Start()
     {
-        
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        if (_uiManager == null)
+        {
+            Debug.LogError("UI Manager is null");
+        }
     }
 
     public void StartSpawning()
     {
+        _currWave++;
+        _stopSpawning = false;
+        _uiManager.UpdateWaveCount(_currWave);
+        StopAllCoroutines();
         StartCoroutine(SpawnEnemyRoutine());
         StartCoroutine(SpawnPowerupRoutine());
         StartCoroutine(SpawnNegativePickupRoutine());
         _spawning = true;
     }
 
+
     IEnumerator SpawnEnemyRoutine()
     {
-        yield return new WaitForSeconds(2);
+        int numEnemies = _waveEnemyCounters[_currWave - 1];
+        yield return new WaitForSeconds(Random.Range(2,4));
         while (!_stopSpawning)
         {
-            GameObject newEnemy = Instantiate(_enemyPrefab, new Vector3(Random.Range(-9, 10), _ySpawn, 0), Quaternion.identity);
-            //newEnemy.transform.parent = _enemyContainer.transform;
-            yield return new WaitForSeconds(2.5f);
+            for (int i = 1; i <= numEnemies; i++)
+            {
+                GameObject newEnemy = Instantiate(_enemyPrefab, new Vector3(Random.Range(-9, 10), _ySpawn, 0), Quaternion.identity);
+                Debug.Log("Spawning enemy number: " + i + " of wave: " + _currWave);
+                newEnemy.transform.parent = _enemyContainer.transform;
+                yield return new WaitForSeconds(2.5f);
+            }
+            _stopSpawning = true;
+            _spawning = false;
         }
+        _uiManager.StartWaveTimer(10);
+        yield return new WaitForSeconds(10);
+        StartSpawning();
     }
 
     IEnumerator SpawnPowerupRoutine()
@@ -84,6 +108,8 @@ public class SpawnManager : MonoBehaviour
     public void StopSpawn()
     {
         _stopSpawning = true;
+        _spawning = false;
+        StopAllCoroutines();
     }
 
     public bool GetSpawnStatus()
