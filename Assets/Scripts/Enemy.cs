@@ -69,7 +69,7 @@ public class Enemy : MonoBehaviour
     {
 
         CalculateMovement();
-        RotateEnemy();
+        //RotateEnemy();
 
         if (Time.time > _canFire && !_isDead)
         {
