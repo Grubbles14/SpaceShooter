@@ -27,6 +27,10 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private GameObject _enemyShield;
 
+    private float _rotAngleClamp = 10f;
+    private float _rotAngle;
+    private float _rotSpeed = 2f;
+
     void Awake()
     {
         int d = Random.Range(1, 11);
@@ -65,8 +69,9 @@ public class Enemy : MonoBehaviour
     {
 
         CalculateMovement();
+        //RotateEnemy();
 
-        if(Time.time > _canFire && !_isDead)
+        if (Time.time > _canFire && !_isDead)
         {
             _fireRate = Random.Range(3f, 7f);
             _canFire = Time.time + _fireRate;
@@ -88,6 +93,7 @@ public class Enemy : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -133,5 +139,39 @@ public class Enemy : MonoBehaviour
         _enemyShield.SetActive(false);
         _audioSource.Play();
         Destroy(gameObject, 2.8f);
+    }
+
+    private void RotateEnemy()
+    {
+        _rotAngle = transform.rotation.z;
+
+        _rotAngle += (_rotSpeed * Time.deltaTime);
+
+        _rotAngle = Mathf.Clamp(_rotAngle, -_rotAngleClamp, _rotAngleClamp);
+
+        //transform.Rotate(Vector3.forward * Time.deltaTime * _rotSpeed);
+        //transform.eulerAngles = new Vector3(0, 0, _rotAngle);
+        //Quaternion rQuat = Quaternion.AngleAxis(_rotAngle, Vector3.forward);
+
+        transform.localRotation = new Quaternion(transform.localRotation.eulerAngles.x, transform.localRotation.eulerAngles.y, _rotAngle, 1);
+        Debug.Log("transform rotation z: " + transform.localRotation.eulerAngles.z + "     rotangle" + _rotAngle);
+
+
+        if (transform.localRotation.eulerAngles.z > _rotAngleClamp)
+        {
+            Debug.Log("in if statement");
+            //_rotSpeed *= -1;
+            //_rotAngle += (_rotSpeed);
+            //transform.eulerAngles = new Vector3(0, 0, _rotAngle);
+
+        }
+        else if (transform.localRotation.eulerAngles.z < -_rotAngleClamp)
+        {
+            Debug.Log("in if-else");
+            //_rotSpeed *= -1;
+            //_rotAngle += (_rotSpeed);
+            //transform.eulerAngles = new Vector3(0, 0, _rotAngle);
+        }
+
     }
 }

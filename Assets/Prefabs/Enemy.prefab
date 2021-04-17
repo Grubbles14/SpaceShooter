@@ -53,6 +53,7 @@ MonoBehaviour:
   _laserPrefab: {fileID: 1424241895690140923, guid: ebcb3f2180b1a2b469e78130a302f7b0,
     type: 3}
   _enemyShield: {fileID: 7470946161745433094}
+  _rotSpeed: 15
 --- !u!50 &6605578059063922758
 Rigidbody2D:
   serializedVersion: 4
