@@ -114,23 +114,26 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    IEnumerator WaveCountdownTimer(float t)
+    IEnumerator WaveCountdownTimer(float t, bool b)
     {
         _waveCountdownTimer.enabled = true;
         float secondsLeft = t;
         while (secondsLeft > 0)
         {
             Debug.Log("Wave countdown: " + secondsLeft);
-            _waveCountdownTimer.text = "New wave starting in: " + secondsLeft;
+            if(b)
+                _waveCountdownTimer.text = "Boss wave starting in: " + secondsLeft;
+            else
+                _waveCountdownTimer.text = "Next wave starting in: " + secondsLeft;
             yield return new WaitForSeconds(1.0f);
             secondsLeft--;
         }
         _waveCountdownTimer.enabled = false;
     }
 
-    public void StartWaveTimer(float time)
+    public void StartWaveTimer(float time, bool boss)
     {
         StopCoroutine("WaveCountdownTimer");
-        StartCoroutine(WaveCountdownTimer(time));
+        StartCoroutine(WaveCountdownTimer(time, boss));
     }
 }
