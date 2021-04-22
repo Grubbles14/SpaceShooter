@@ -50,7 +50,7 @@ public class UIManager : MonoBehaviour
 
         if(currentLives == 0)
         {
-            GameOverSequence();
+            GameOverSequence(false);
         }
     }
 
@@ -95,19 +95,22 @@ public class UIManager : MonoBehaviour
         _waveCountText.text = "Wave: " + w;
     }
 
-    void GameOverSequence()
+    public void GameOverSequence(bool win)
     {
         _gameOverText.gameObject.SetActive(true);
-        StartCoroutine(FlickerGameOver());
+        StartCoroutine(FlickerGameOver(win));
         _restartText.gameObject.SetActive(true);
         _gameManager.GetComponent<GameManager>().GameOver();
     }
 
-    IEnumerator FlickerGameOver()
+    IEnumerator FlickerGameOver(bool w)
     {
         while (true)
         {
-            _gameOverText.text = "GAME OVER";
+            if(!w)
+                _gameOverText.text = "GAME OVER";
+            else if (w)
+                _gameOverText.text = "YOU WIN";
             yield return new WaitForSeconds(.5f);
             _gameOverText.text = "";
             yield return new WaitForSeconds(.5f);

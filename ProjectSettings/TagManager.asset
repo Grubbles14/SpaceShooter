@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - Railgun
   - NegativePickup
+  - Boss
   layers:
   - Default
   - TransparentFX
