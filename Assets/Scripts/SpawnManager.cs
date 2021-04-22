@@ -7,6 +7,8 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject _enemyPrefab;
     [SerializeField]
+    private GameObject _bossPrefab;
+    [SerializeField]
     private GameObject _enemyContainer;
     [SerializeField]
     private GameObject _tripleShotPrefab;
@@ -65,9 +67,19 @@ public class SpawnManager : MonoBehaviour
             _stopSpawning = true;
             _spawning = false;
         }
-        _uiManager.StartWaveTimer(10);
-        yield return new WaitForSeconds(10);
-        StartSpawning();
+        if (_currWave == _waveEnemyCounters.Length - 1)
+        {
+            //logic to spawn boss goes here
+            _uiManager.StartWaveTimer(10, true);
+            yield return new WaitForSeconds(10);
+            Instantiate(_bossPrefab);
+        }
+        else
+        {
+            _uiManager.StartWaveTimer(10, false);
+            yield return new WaitForSeconds(10);
+            StartSpawning();
+        }
     }
 
     IEnumerator SpawnPowerupRoutine()

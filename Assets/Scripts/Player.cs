@@ -283,7 +283,7 @@ public class Player : MonoBehaviour
     {
         if (other.tag == "Laser" && other.GetComponent<Laser>().IsEnemy())
         {
-                Destroy(other.transform.parent.gameObject);
+                Destroy(other.gameObject);
                 Damage();
         }
     }

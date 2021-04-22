@@ -50,7 +50,7 @@ public class UIManager : MonoBehaviour
 
         if(currentLives == 0)
         {
-            GameOverSequence();
+            GameOverSequence(false);
         }
     }
 
@@ -95,42 +95,48 @@ public class UIManager : MonoBehaviour
         _waveCountText.text = "Wave: " + w;
     }
 
-    void GameOverSequence()
+    public void GameOverSequence(bool win)
     {
         _gameOverText.gameObject.SetActive(true);
-        StartCoroutine(FlickerGameOver());
+        StartCoroutine(FlickerGameOver(win));
         _restartText.gameObject.SetActive(true);
         _gameManager.GetComponent<GameManager>().GameOver();
     }
 
-    IEnumerator FlickerGameOver()
+    IEnumerator FlickerGameOver(bool w)
     {
         while (true)
         {
-            _gameOverText.text = "GAME OVER";
+            if(!w)
+                _gameOverText.text = "GAME OVER";
+            else if (w)
+                _gameOverText.text = "YOU WIN";
             yield return new WaitForSeconds(.5f);
             _gameOverText.text = "";
             yield return new WaitForSeconds(.5f);
         }
     }
 
-    IEnumerator WaveCountdownTimer(float t)
+    IEnumerator WaveCountdownTimer(float t, bool b)
     {
         _waveCountdownTimer.enabled = true;
         float secondsLeft = t;
         while (secondsLeft > 0)
         {
             Debug.Log("Wave countdown: " + secondsLeft);
-            _waveCountdownTimer.text = "New wave starting in: " + secondsLeft;
+            if(b)
+                _waveCountdownTimer.text = "Boss wave starting in: " + secondsLeft;
+            else
+                _waveCountdownTimer.text = "Next wave starting in: " + secondsLeft;
             yield return new WaitForSeconds(1.0f);
             secondsLeft--;
         }
         _waveCountdownTimer.enabled = false;
     }
 
-    public void StartWaveTimer(float time)
+    public void StartWaveTimer(float time, bool boss)
     {
         StopCoroutine("WaveCountdownTimer");
-        StartCoroutine(WaveCountdownTimer(time));
+        StartCoroutine(WaveCountdownTimer(time, boss));
     }
 }
