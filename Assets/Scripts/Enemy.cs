@@ -21,6 +21,8 @@ public class Enemy : MonoBehaviour
     private float _fireRate = 3.0f;
     private float _canFire = -1f;
     private bool _isDead = false;
+    private Vector3 _angleToPos;
+    private bool _angleEnemy = false;
 
     private bool _isShieldedEnemy = false;
     private bool _shieldUp = false;
@@ -38,6 +40,14 @@ public class Enemy : MonoBehaviour
         {
             case 1:
                 _isShieldedEnemy = true;
+                break;
+            case 2:
+                Vector3 _playerPos = GameObject.Find("Player").GetComponent<Transform>().position;
+                _angleToPos = new Vector3(_playerPos.x + Random.Range(-2,2), _playerPos.y-10, _playerPos.z);
+                _angleEnemy = true;
+                float opp = _angleToPos.x - transform.position.x;
+                float adj = _angleToPos.y - transform.position.y;
+                transform.Rotate(0, 0, Mathf.Atan(opp / adj) * Mathf.Rad2Deg * -1);
                 break;
             default:
                 break;
@@ -69,7 +79,6 @@ public class Enemy : MonoBehaviour
     {
 
         CalculateMovement();
-        //RotateEnemy();
 
         if (Time.time > _canFire && !_isDead)
         {
@@ -87,7 +96,13 @@ public class Enemy : MonoBehaviour
 
     private void CalculateMovement(){
 
-        transform.Translate(Vector3.down * Time.deltaTime * _enemySpeed);
+        if (_angleEnemy)
+        {
+            float step = _enemySpeed*2 * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, _angleToPos, step);
+        }
+        else
+            transform.Translate(Vector3.down * Time.deltaTime * _enemySpeed);
 
         if (transform.position.y < -5)
         {
