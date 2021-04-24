@@ -46,6 +46,8 @@ public class Player : MonoBehaviour
     private bool _isShieldEnabled = false;
     [SerializeField]
     private GameObject _playerShield;
+    [SerializeField]
+    private GameObject _playerMagnet;
 
     private int _score = 0;
 
@@ -133,6 +135,8 @@ public class Player : MonoBehaviour
             Debug.LogError("Camera is NULL");
         }
 
+        _playerMagnet.SetActive(false);
+
 
         _uiManager.UpdateAmmo(_currentAmmo, _maxAmmo);
     }
@@ -149,6 +153,16 @@ public class Player : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Space) && Time.time > _nextFire && _currentAmmo <= 0)
         {
             _audioSource.PlayOneShot(_fireErrorSound);
+        }
+
+        if (Input.GetKey(KeyCode.C))
+        {
+            _playerMagnet.SetActive(true);
+        }
+
+        if (Input.GetKeyUp(KeyCode.C))
+        {
+            _playerMagnet.SetActive(false);
         }
 
     }
