@@ -68,4 +68,13 @@ public class PowerUp : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.gameObject.name == "PlayerMagnet")
+        {
+            float step = 10 * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, other.gameObject.GetComponent<Transform>().position, step);
+        }
+    }
 }
