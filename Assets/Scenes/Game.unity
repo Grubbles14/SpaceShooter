@@ -214,12 +214,14 @@ MonoBehaviour:
   _enemyContainer: {fileID: 2082474356}
   _tripleShotPrefab: {fileID: 9113204359332053904, guid: 99cc3877ca4c79746a5f1985e87d8a14,
     type: 3}
+  _healthPrefab: {fileID: 9113204359332053904, guid: aa19761f180c502458b81180d0b2ab83,
+    type: 3}
+  _ammoPrefab: {fileID: 8653368840703046733, guid: 1db995d3020e70c469f9d35cab1c3a91,
+    type: 3}
   _powerupList:
   - {fileID: 9113204359332053904, guid: 99cc3877ca4c79746a5f1985e87d8a14, type: 3}
   - {fileID: 9213111447375927102, guid: 6cff049714e680947a84c2129797dc5c, type: 3}
   - {fileID: 6909066130861527419, guid: 2f20d6667d9cd604e82e2dd92f0ab806, type: 3}
-  - {fileID: 8653368840703046733, guid: 1db995d3020e70c469f9d35cab1c3a91, type: 3}
-  - {fileID: 9113204359332053904, guid: aa19761f180c502458b81180d0b2ab83, type: 3}
   _negPickupList:
   - {fileID: 9113204359332053904, guid: 87743df7669c9d54d9203e4c8ecc2fc9, type: 3}
   _specialPowerupList:

@@ -12,6 +12,10 @@ public class SpawnManager : MonoBehaviour
     private GameObject _enemyContainer;
     [SerializeField]
     private GameObject _tripleShotPrefab;
+    [SerializeField]
+    private GameObject _healthPrefab;
+    [SerializeField]
+    private GameObject _ammoPrefab;
     private float _ySpawn = 7.0f;
     private bool _stopSpawning = false;
     private bool _spawning = false;
@@ -46,6 +50,7 @@ public class SpawnManager : MonoBehaviour
         StopAllCoroutines();
         StartCoroutine(SpawnEnemyRoutine());
         StartCoroutine(SpawnPowerupRoutine());
+        StartCoroutine(SpawnHealthAmmoRoutine());
         StartCoroutine(SpawnNegativePickupRoutine());
         _spawning = true;
     }
@@ -103,6 +108,23 @@ public class SpawnManager : MonoBehaviour
             }
             yield return new WaitForSeconds(Random.Range(6, 10));
         }
+    }
+
+    IEnumerator SpawnHealthAmmoRoutine()
+    {
+        int t = Random.Range(2, 6);
+        yield return new WaitForSeconds(t);
+        while (!_stopSpawning)
+        {
+            int d = Random.Range(1, 6);
+            if (d == 2)
+                Instantiate(_healthPrefab, new Vector3(Random.Range(-9, 10), _ySpawn, 0), Quaternion.identity);
+            else
+                Instantiate(_ammoPrefab, new Vector3(Random.Range(-9, 10), _ySpawn, 0), Quaternion.identity);
+            yield return new WaitForSeconds(Random.Range(6, 10));
+
+        }
+
     }
 
     IEnumerator SpawnNegativePickupRoutine()
