@@ -28,6 +28,8 @@ public class Enemy : MonoBehaviour
     private bool _shieldUp = false;
     [SerializeField]
     private GameObject _enemyShield;
+    [SerializeField]
+    private GameObject[] _tinyEnemies;
 
     private float _rotAngleClamp = 10f;
     private float _rotAngle;
@@ -48,6 +50,10 @@ public class Enemy : MonoBehaviour
                 float opp = _angleToPos.x - transform.position.x;
                 float adj = _angleToPos.y - transform.position.y;
                 transform.Rotate(0, 0, Mathf.Atan(opp / adj) * Mathf.Rad2Deg * -1);
+                break;
+            case 3:
+                foreach (GameObject go in _tinyEnemies)
+                    go.SetActive(true);
                 break;
             default:
                 break;
@@ -152,6 +158,9 @@ public class Enemy : MonoBehaviour
         this.GetComponent<BoxCollider2D>().enabled = false;
         _isDead = true;
         _enemyShield.SetActive(false);
+        for (int i = 0; i < transform.childCount; i++){
+            transform.GetChild(i).gameObject.SetActive(false);
+        }
         _audioSource.Play();
         Destroy(gameObject, 2.8f);
     }
