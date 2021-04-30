@@ -124,7 +124,6 @@ public class SpawnManager : MonoBehaviour
             yield return new WaitForSeconds(Random.Range(6, 10));
 
         }
-
     }
 
     IEnumerator SpawnNegativePickupRoutine()

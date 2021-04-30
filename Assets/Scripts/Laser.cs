@@ -10,9 +10,9 @@ public class Laser : MonoBehaviour
 
     void Start()
     {
-        if (transform.parent == null)
+        if (transform.parent == null || transform.parent.tag == "Enemy")
             Destroy(gameObject, 3f);
-        else if (transform.parent != null)
+        else if (transform.parent != null && transform.parent.tag != "Enemy")
             Destroy(transform.parent.gameObject, 3f);
     }
 
